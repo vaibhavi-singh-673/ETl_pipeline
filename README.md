@@ -7,10 +7,13 @@ and builds a reporting warehouse with sales and returns procedures.
 ## Pipeline
 
 ```text
-CSV files -> MySQL -> Python ETL: extract, transform, validate
-                              |
-                              v
-                    BigQuery raw tables
+CSV files
+  |
+  V
+MySQL
+  |
+  V
+Python ETL: extract, transform, validate ->  BigQuery raw tables
                               |
                               v
 BigQuery warehouse: dimensions and facts
