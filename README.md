@@ -7,22 +7,53 @@ and builds a reporting warehouse with sales and returns procedures.
 ## Pipeline
 
 ```text
-CSV files
-  |
-  V
-MySQL
-  |
-  V
-Python ETL: extract, transform, validate ->  BigQuery raw tables
-                              |
-                              v
-BigQuery warehouse: dimensions and facts
-  |
-  v
-Stored procedures
-  |
-  v
-Reporting
+Project Architecture:
+
+                    ┌─────────────────┐
+                    │    CSV File     │
+                    └────────┬────────┘
+                             │
+                             │ Mysql quries load
+                             ▼     
+                    ┌─────────────────┐
+                    │   MySQL 9.7     │
+                    │ Operational DB  │
+                    └────────┬────────┘
+                             │
+                             │ Python ETL
+                             ▼
+                    ┌─────────────────┐
+                    │    BigQuery     │
+                    │  retailmart_raw │
+                    └────────┬────────┘
+                             │
+                             │ SQL transformation
+                             ▼
+                    ┌─────────────────┐
+                    │    BigQuery     │
+                    │  retailmart_dw  │
+                    └────────┬────────┘
+                             │
+              ┌──────────────┼──────────────┐
+              ▼              ▼              ▼
+        Dimensions         Facts        Analytics
+
+Warehouse Architecture:
+
+                    dim_date
+                       │
+                       │
+dim_customer ──── fact_sales ──── dim_store
+                       │
+                       │
+                 fact_sales_item
+                       │
+                       │
+                  dim_product
+
+
+dim_date ───── fact_returns ───── dim_product
+
 ```
 
 ## Requirements
@@ -146,6 +177,10 @@ MySQL is installed elsewhere:
 $mysql = "C:\Program Files\MySQL\MySQL Server 9.7\bin\mysql.exe"
 & $mysql -u root -p -e "SET GLOBAL local_infile = 1;"
 & $mysql --local-infile=1 -u root -p
+```
+```sql
+CREATE SCHEMA IF NOT EXISTS
+`Your_Project_ID.retailmart_dw`;
 ```
 
 Run this SQL in the MySQL prompt. Load the tables in this order because of
