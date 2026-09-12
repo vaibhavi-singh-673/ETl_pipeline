@@ -241,62 +241,6 @@ The report page is a static presentation of the project. Run the BigQuery
 procedure commands in the report or in the terminal to retrieve current live
 sales and returns results for a selected date range.
 
-## Screenshots
-
-Add screenshots below when presenting the project. Each placeholder describes
-the most useful view to capture.
-
-### MySQL Source Database
-
-Show the `retailmart` database and its eight source tables in MySQL Workbench
-or the VS Code MySQL terminal.
-
-```text
-[Add MySQL schema or SHOW TABLES screenshot here]
-```
-
-### ETL Validation and Load
-
-Show the terminal output from `python .\02_python_etl\etl_pipeline.py --source mysql`, including
-successful validation and BigQuery loading messages.
-
-```text
-[Add ETL execution screenshot here]
-```
-
-### BigQuery Warehouse
-
-Show the `retailmart_raw` and `retailmart_dw` datasets, including dimension and
-fact tables.
-
-```text
-[Add BigQuery warehouse screenshot here]
-```
-
-### Analytics Procedures
-
-Show the result of `sp_sales_metrics` or `sp_returns_analysis` in BigQuery.
-
-```text
-[Add stored procedure result screenshot here]
-```
-
-### Database Relationship Diagram
-
-Show the styled diagram opened with the `Start-Process` command above.
-
-```text
-[Add ER diagram screenshot here]
-```
-
-### Report Diagram
-
-Show the styled diagram opened with the `Start-Process` command above.
-
-```text
-[Add Report diagram screenshot here]
-```
-
 ## Deliverables
 
 ### a. MySQL ER Diagram and Database Schema Design
