@@ -186,6 +186,28 @@ sales, sales-item, and returns facts. Category attributes are flattened into
 the product dimension. Revenue uses `fact_sales.net_amount`, and return rate
 is returned quantity divided by sold quantity.
 
+## References and Assumptions
+
+This submission is based on the provided RetailMart case-study brief and the
+provided `reference/README.md` and `reference/generate_data.py` files. The
+reference materials were used to understand the required entities, business
+metrics, expected pipeline stages, and sample-data relationships.
+
+Implementation decisions and assumptions are documented in this README and in
+the SQL and Python source files. In particular:
+
+- The actual supplied customer CSV contains 50 records, so the pipeline does
+  not assume the reference README's illustrative count of 200 customers.
+- Store data is represented by `store_id` because no store master source table
+  was supplied.
+- The report reads current values by calling the existing BigQuery procedures;
+  it does not invent or hard-code business results.
+- The schema, ETL, warehouse SQL, procedures, diagrams, and report are arranged
+  as project-specific implementation files rather than copied reference output.
+
+Any external library usage is limited to the dependencies listed in
+`etl/requirements.txt` and their documented APIs.
+
 ## View and Check the ER Diagram
 
 The diagram files are in `diagrams`:
