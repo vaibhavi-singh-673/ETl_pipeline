@@ -52,8 +52,8 @@ Start-Process .\MySQL_ER_And_Schema\ER_Diagram\mysql_er_diagram.html
 To generate the project analytics report from live BigQuery results:
 
 ```powershell
-python .\reports\generate_report.py --start-date 2024-01-01 --end-date 2024-12-31
-Start-Process .\reports\retailmart_analytics_report.html
+python .\Report\generate_report.py --start-date 2024-01-01 --end-date 2024-12-31
+Start-Process .\Report\retailmart_analytics_report.html
 ```
 
 The generator calls `sp_sales_metrics` and `sp_returns_analysis` in the
@@ -92,6 +92,90 @@ update the `$mysql` path.
 
 The ETL uses the existing MySQL tables as its source. For a local test without
 MySQL, use CSV mode in step 3.
+
+### 1a. Load CSV data into MySQL
+
+If the MySQL tables are empty, load the CSV files after creating the schema.
+First enable local file loading from a PowerShell terminal:
+
+```powershell
+$mysql = "C:\Program Files\MySQL\MySQL Server 9.7\bin\mysql.exe"
+& $mysql -u root -p -e "SET GLOBAL local_infile = 1;"
+```
+
+Start the MySQL client with local file loading enabled:
+
+```powershell
+& $mysql --local-infile=1 -u root -p
+```
+
+Run the following SQL inside the MySQL prompt. The absolute paths avoid
+relative-path problems when the client was opened from another directory:
+
+```sql
+USE retailmart;
+
+LOAD DATA LOCAL INFILE 'C:/Users/vaibhavi/Desktop/data_pipeline/Sample_Data/categories.csv'
+INTO TABLE categories
+FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
+
+LOAD DATA LOCAL INFILE 'C:/Users/vaibhavi/Desktop/data_pipeline/Sample_Data/products.csv'
+INTO TABLE products
+FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
+
+LOAD DATA LOCAL INFILE 'C:/Users/vaibhavi/Desktop/data_pipeline/Sample_Data/customers.csv'
+INTO TABLE customers
+FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
+
+LOAD DATA LOCAL INFILE 'C:/Users/vaibhavi/Desktop/data_pipeline/Sample_Data/sales_transactions.csv'
+INTO TABLE sales_transactions
+FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
+
+LOAD DATA LOCAL INFILE 'C:/Users/vaibhavi/Desktop/data_pipeline/Sample_Data/sales_items.csv'
+INTO TABLE sales_items
+FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
+
+LOAD DATA LOCAL INFILE 'C:/Users/vaibhavi/Desktop/data_pipeline/Sample_Data/vouchers.csv'
+INTO TABLE vouchers
+FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
+
+LOAD DATA LOCAL INFILE 'C:/Users/vaibhavi/Desktop/data_pipeline/Sample_Data/voucher_redemptions.csv'
+INTO TABLE voucher_redemptions
+FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
+
+LOAD DATA LOCAL INFILE 'C:/Users/vaibhavi/Desktop/data_pipeline/Sample_Data/returns.csv'
+INTO TABLE returns
+FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
+```
+
+Verify the loaded data:
+
+```sql
+SELECT 'categories' AS table_name, COUNT(*) AS row_count FROM categories
+UNION ALL SELECT 'products', COUNT(*) FROM products
+UNION ALL SELECT 'customers', COUNT(*) FROM customers
+UNION ALL SELECT 'sales_transactions', COUNT(*) FROM sales_transactions
+UNION ALL SELECT 'sales_items', COUNT(*) FROM sales_items
+UNION ALL SELECT 'vouchers', COUNT(*) FROM vouchers
+UNION ALL SELECT 'voucher_redemptions', COUNT(*) FROM voucher_redemptions
+UNION ALL SELECT 'returns', COUNT(*) FROM returns;
+```
+
+The source files contain 10 categories, 50 products, 50 customers, 5,000 sales
+transactions, 15,047 sales items, 100 vouchers, 300 redemptions, and 500
+returns. After every `LOAD DATA` command, check the reported warnings. For
+example:
+
+```sql
+SHOW WARNINGS LIMIT 20;
+```
+
+If a table loads fewer rows than its CSV file, do not continue to the ETL until
+the warnings are understood. Blank nullable customer IDs are a common reason
+for transaction rows to be rejected when foreign-key checks are enabled.
+Type `exit;` to leave MySQL before running PowerShell commands. Do not paste
+PowerShell commands such as `Set-ExecutionPolicy` or `Get-Content` into the
+MySQL prompt; MySQL will interpret them as SQL and report syntax errors.
 
 ### 2. Prepare Python and environment variables
 
@@ -233,7 +317,7 @@ the constraints in the MySQL schema.
 
 ## View the HTML Analytics Report
 
-Open `reports/retailmart_analytics_report.html` to view the project as a
+Open `Report/retailmart_analytics_report.html` to view the project as a
 browser-friendly report. It includes the pipeline summary, data-quality checks,
 warehouse model, and explanations of both BigQuery procedures.
 
@@ -257,7 +341,7 @@ or the VS Code MySQL terminal.
 
 ### ETL Validation and Load
 
-Show the terminal output from `python .\02_python_etl\etl_pipeline.py --source mysql`, including
+Show the terminal output from `python .\Python_ETL_Pipeline\etl_pipeline.py --source mysql`, including
 successful validation and BigQuery loading messages.
 
 ```text
@@ -344,8 +428,8 @@ BigQuery warehouse.
 
 The generated HTML presentation is an additional project output:
 
-- `reports/generate_report.py` - fetches live procedure results from BigQuery.
-- `reports/retailmart_analytics_report.html` - browser-renderable report.
+- `Report/generate_report.py` - fetches live procedure results from BigQuery.
+- `Report/retailmart_analytics_report.html` - browser-renderable report.
 
 ## Architecture
 
