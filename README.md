@@ -62,7 +62,9 @@ Run it again whenever you want a new reporting period.
 
 ### 1. Create or verify the MySQL schema
 
-Skip schema creation if the `retailmart` database and tables already exist.
+Run the schema command only when the database is new. If you see
+`ERROR 1050 (42S01): Table 'categories' already exists`, the schema is already
+created; skip the first command and continue with the user access setup.
 
 ```powershell
 $mysql = "C:\Program Files\MySQL\MySQL Server 9.7\bin\mysql.exe"
@@ -70,6 +72,19 @@ Set-Location "C:\Users\vaibhavi\Desktop\data_pipeline"
 Get-Content .\mysql\schema.sql -Raw | & $mysql -u root -p
 & $mysql -u retailmart_user -p -D retailmart -e "SHOW TABLES;"
 ```
+
+If `retailmart_user` returns `ERROR 1045 (28000)`, log in as MySQL root and
+create or reset the ETL account. Replace `YOUR_PASSWORD` with the same value
+used for `MYSQL_PASSWORD` in `etl/.env`:
+
+```powershell
+& $mysql -u root -p -e "CREATE USER IF NOT EXISTS 'retailmart_user'@'localhost' IDENTIFIED BY 'YOUR_PASSWORD'; ALTER USER 'retailmart_user'@'localhost' IDENTIFIED BY 'YOUR_PASSWORD'; GRANT ALL PRIVILEGES ON retailmart.* TO 'retailmart_user'@'localhost'; FLUSH PRIVILEGES;"
+& $mysql -u retailmart_user -p -D retailmart -e "SHOW TABLES;"
+```
+
+Do not paste the commands with a trailing `)` after the quoted MySQL path.
+PowerShell shows `>>` when a quote or command is incomplete; press `Ctrl+C`
+and paste the complete block again.
 
 If `mysql` is already on your Windows `PATH`, you can use `mysql` instead of
 the `$mysql` variable. If your MySQL installation is in a different folder,
