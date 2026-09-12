@@ -28,19 +28,13 @@ Reporting
 - Google Cloud SDK (`gcloud` and `bq`)
 - A Google Cloud project with BigQuery enabled; billing is not required for
   this billing-free implementation
-- MySQL Server, only when using MySQL as the source
+- MySQL Server
 
 ## Google Cloud Project and BigQuery Datasets
 
 Create or select a Google Cloud project before running the pipeline. You can
 create a project in the Google Cloud Console, or use the CLI if you have the
-required organization permissions:
-
-```powershell
-gcloud projects create YOUR_PROJECT_ID --name="RetailMart Analytics"
-gcloud config set project YOUR_PROJECT_ID
-gcloud services enable bigquery.googleapis.com
-```
+required organization permissions
 
 If the project already exists, skip the `gcloud projects create` command.
 This project uses the billing-free BigQuery SQL configuration, so no billing
@@ -51,9 +45,11 @@ Use the same project ID everywhere in this README and in
 
 ```powershell
 gcloud auth application-default login
+gcloud projects create YOUR_PROJECT_ID --name="RetailMart Analytics"
 gcloud config set project YOUR_PROJECT_ID
 bq mk --location=US YOUR_PROJECT_ID:retailmart_raw
 bq mk --location=US YOUR_PROJECT_ID:retailmart_dw
+gcloud services enable bigquery.googleapis.com
 ```
 
 The project contains two datasets:
@@ -71,9 +67,10 @@ exists, `bq mk` reports that it exists; continue without recreating it.
 From the repository root:
 
 ```powershell
-python -m venv .\venv
-.\.venv\Scripts\Activate.ps1
 python -m pip install -r .\Python_ETL_Pipeline\requirements.txt
+Remove-Item -Recurse -Force .\venv
+python -m venv .\venv
+.\venv\Scripts\Activate.ps1
 ```
 
 Create `Python_ETL_Pipeline/.env`:
@@ -116,14 +113,25 @@ The main migration workflow is CSV -> MySQL -> BigQuery. The CSV files are
 loaded into MySQL first; the production ETL then reads from MySQL. It does not
 load the CSV files directly into BigQuery.
 
-Create the schema in `MySQL_ER_And_Schema/Schema/mysql_schema.sql`, load the
-source CSV files into MySQL using the instructions below, then run:
+Create the schema in `MySQL_ER_And_Schema/Schema/mysql_schema.sql`, load the source CSV files into MySQL using the instructions below, then run:
 
 Create the database and tables as MySQL root:
 
 ```powershell
 $mysql = "C:\Program Files\MySQL\MySQL Server 9.7\bin\mysql.exe"
 Get-Content .\MySQL_ER_And_Schema\Schema\mysql_schema.sql -Raw | & $mysql -u root -p
+```
+Create the MySQL user and grant access as root:
+
+```powershell
+CREATE USER IF NOT EXISTS 'retailmart_user'@'localhost'
+IDENTIFIED BY 'YOUR_MYSQL_PASSWORD';
+
+ALTER USER 'retailmart_user'@'localhost'
+IDENTIFIED BY 'YOUR_MYSQL_PASSWORD';
+
+GRANT ALL PRIVILEGES ON retailmart.* TO 'retailmart_user'@'localhost';
+FLUSH PRIVILEGES;
 ```
 
 ### Load CSV files into MySQL
@@ -141,37 +149,38 @@ Run this SQL in the MySQL prompt. Load the tables in this order because of
 their foreign-key dependencies:
 
 ```sql
+SHOW DATABASES;
 USE retailmart;
 
-LOAD DATA LOCAL INFILE 'C:/path/to/data_pipeline/Sample_Data/categories.csv'
+LOAD DATA LOCAL INFILE 'C:\Users\vaibhavi\Desktop\data_pipeline\Sample_Data\categories.csv'
 INTO TABLE categories
 FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
 
-LOAD DATA LOCAL INFILE 'C:/path/to/data_pipeline/Sample_Data/products.csv'
+LOAD DATA LOCAL INFILE 'C:\Users\vaibhavi\Desktop\data_pipeline\Sample_Data\products.csv'
 INTO TABLE products
 FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
 
-LOAD DATA LOCAL INFILE 'C:/path/to/data_pipeline/Sample_Data/customers.csv'
+LOAD DATA LOCAL INFILE 'C:\Users\vaibhavi\Desktop\data_pipeline\Sample_Data\customers.csv'
 INTO TABLE customers
 FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
 
-LOAD DATA LOCAL INFILE 'C:/path/to/data_pipeline/Sample_Data/sales_transactions.csv'
+LOAD DATA LOCAL INFILE 'C:\Users\vaibhavi\Desktop\data_pipeline\Sample_Data\sales_transactions.csv'
 INTO TABLE sales_transactions
 FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
 
-LOAD DATA LOCAL INFILE 'C:/path/to/data_pipeline/Sample_Data/sales_items.csv'
+LOAD DATA LOCAL INFILE 'C:\Users\vaibhavi\Desktop\data_pipeline\Sample_Data\sales_items.csv'
 INTO TABLE sales_items
 FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
 
-LOAD DATA LOCAL INFILE 'C:/path/to/data_pipeline/Sample_Data/vouchers.csv'
+LOAD DATA LOCAL INFILE 'C:\Users\vaibhavi\Desktop\data_pipeline\Sample_Data\vouchers.csv'
 INTO TABLE vouchers
 FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
 
-LOAD DATA LOCAL INFILE 'C:/path/to/data_pipeline/Sample_Data/voucher_redemptions.csv'
+LOAD DATA LOCAL INFILE 'C:\Users\vaibhavi\Desktop\data_pipeline\Sample_Data\voucher_redemptions.csv'
 INTO TABLE voucher_redemptions
 FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
 
-LOAD DATA LOCAL INFILE 'C:/path/to/data_pipeline/Sample_Data/returns.csv'
+LOAD DATA LOCAL INFILE 'C:\Users\vaibhavi\Desktop\data_pipeline\Sample_Data\returns.csv'
 INTO TABLE returns
 FIELDS TERMINATED BY ',' ENCLOSED BY '"' IGNORE 1 ROWS;
 ```
@@ -213,18 +222,23 @@ it must match `GCP_PROJECT_ID` in `.env` and the project used to create both
 datasets. The warehouse SQL reads from `retailmart_raw` and writes to
 `retailmart_dw`.
 
-Run the SQL files in this order after the ETL succeeds. The warehouse build
-creates or replaces the warehouse tables from the raw dataset; it does not
+Run the executable warehouse build and procedures after the ETL succeeds. The
+warehouse build drops and recreates only its warehouse tables; it does not
 drop the whole warehouse dataset:
 
 ```powershell
-bq query --use_legacy_sql=false (Get-Content .\BigQuery_Warehouse\build_warehouse.sql -Raw)
-bq query --use_legacy_sql=false (Get-Content .\SQL_Procedures\business_analytics_procedures.sql -Raw)
+Get-Content .\BigQuery_Warehouse\warehouse_schema.sql -Raw |
+  bq query --use_legacy_sql=false
+Get-Content .\BigQuery_Warehouse\build_warehouse.sql -Raw |
+  bq query --use_legacy_sql=false
+Get-Content .\SQL_Procedures\business_analytics_procedures.sql -Raw |
+  bq query --use_legacy_sql=false
 ```
 
-`warehouse_schema.sql` documents the intended warehouse table contract. The
-executable table build is in `build_warehouse.sql`, followed by the procedures.
-This creates the `retailmart_dw` star schema and the procedures
+`warehouse_schema.sql` documents the intended warehouse table contract and is
+not part of the executable build. The executable table build is in
+`build_warehouse.sql`, followed by the procedures. This creates the
+`retailmart_dw` star schema and the procedures
 `sp_sales_metrics` and `sp_returns_analysis`.
 
 ## Deliverables

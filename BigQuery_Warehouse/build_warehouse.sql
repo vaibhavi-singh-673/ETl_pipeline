@@ -11,6 +11,21 @@ CREATE SCHEMA IF NOT EXISTS
 `retailmart-analytics-508414.retailmart_dw`
 OPTIONS (location = 'US');
 
+DROP TABLE IF EXISTS
+`retailmart-analytics-508414.retailmart_dw.fact_returns`;
+DROP TABLE IF EXISTS
+`retailmart-analytics-508414.retailmart_dw.fact_sales_item`;
+DROP TABLE IF EXISTS
+`retailmart-analytics-508414.retailmart_dw.fact_sales`;
+DROP TABLE IF EXISTS
+`retailmart-analytics-508414.retailmart_dw.dim_product`;
+DROP TABLE IF EXISTS
+`retailmart-analytics-508414.retailmart_dw.dim_customer`;
+DROP TABLE IF EXISTS
+`retailmart-analytics-508414.retailmart_dw.dim_store`;
+DROP TABLE IF EXISTS
+`retailmart-analytics-508414.retailmart_dw.dim_date`;
+
 
 -- ------------------------------------------------------------
 -- 2. DIM_DATE
