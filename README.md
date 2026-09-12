@@ -65,9 +65,15 @@ Run it again whenever you want a new reporting period.
 Skip schema creation if the `retailmart` database and tables already exist.
 
 ```powershell
-Get-Content .\mysql\schema.sql -Raw | mysql -u root -p
-mysql -u retailmart_user -p -D retailmart -e "SHOW TABLES;"
+$mysql = "C:\Program Files\MySQL\MySQL Server 9.7\bin\mysql.exe"
+Set-Location "C:\Users\vaibhavi\Desktop\data_pipeline"
+Get-Content .\mysql\schema.sql -Raw | & $mysql -u root -p
+& $mysql -u retailmart_user -p -D retailmart -e "SHOW TABLES;"
 ```
+
+If `mysql` is already on your Windows `PATH`, you can use `mysql` instead of
+the `$mysql` variable. If your MySQL installation is in a different folder,
+update the `$mysql` path.
 
 The ETL uses the existing MySQL tables as its source. For a local test without
 MySQL, use CSV mode in step 3.
