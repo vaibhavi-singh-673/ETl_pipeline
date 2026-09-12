@@ -338,6 +338,12 @@ constraints, indexes, and appropriate MySQL data types.
 - `MySQL_ER_And_Schema/ER_Diagram/mysql_er_diagram.dot` - Graphviz diagram source.
 - `MySQL_ER_And_Schema/ER_Diagram/mysql_er_diagram.png` - diagram image.
 
+The normalized tables and relationships are shown below:
+
+![MySQL ER diagram overview](Screenshots/ER_diagram_1.png)
+
+![MySQL ER diagram tables and relationships](Screenshots/ER_diagram_2.png)
+
 ### b. Python ETL Pipeline: MySQL to BigQuery Migration
 
 The ETL extracts all eight source tables from MySQL or CSV, transforms dates,
@@ -347,6 +353,10 @@ the results into BigQuery raw tables.
 - `Python_ETL_Pipeline/etl_pipeline.py` - extraction, transformation, validation, logging, and loading.
 - `Python_ETL_Pipeline/requirements.txt` - Python dependencies.
 - `Sample_Data/` - CSV source data for local testing.
+
+The ETL execution loaded and validated the source data:
+
+![Python ETL pipeline execution](Screenshots/ETL_Pipeline.png)
 
 ### c. BigQuery Data Warehouse Schema Design
 
@@ -359,6 +369,14 @@ filters.
 - `retailmart_raw` - source-shaped BigQuery tables loaded by the ETL.
 - `retailmart_dw` - analytical dimensions and facts.
 
+The raw and warehouse datasets contain the following tables:
+
+![BigQuery raw dataset](Screenshots/retailmart_raw_dataset.png)
+
+![BigQuery warehouse dataset](Screenshots/reatilmart_dw_dataset.png)
+
+![BigQuery warehouse row counts](Screenshots/bigquery_datasets.png)
+
 ### d. SQL Procedures for Business Analytics
 
 The procedures provide business-ready sales and returns analysis from the
@@ -370,10 +388,24 @@ BigQuery warehouse.
 - `sp_returns_analysis` - sold quantity, returned quantity, return rate, and
   refund revenue impact by category.
 
+The procedures and their results are shown below:
+
+![BigQuery analytics procedures](Screenshots/Business_Analytic_SQL_procedure.png)
+
+![Sales metrics analysis](Screenshots/analysis%20_sales_metric.png)
+
+![Revenue impact by category](Screenshots/revenue_impact_by_category.png)
+
 The generated HTML presentation is an additional project output:
 
 - `Report/generate_report.py` - fetches live procedure results from BigQuery.
 - `Report/retailmart_analytics_report.html` - browser-renderable report.
+
+![HTML analytics report overview](Screenshots/Report_1_html_site.png)
+
+![HTML analytics report details](Screenshots/report_2_html_site.png)
+
+![HTML analytics report results](Screenshots/Report_3_html_site.png)
 
 ## Architecture
 
