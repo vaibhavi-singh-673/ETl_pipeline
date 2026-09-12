@@ -257,7 +257,7 @@ Open the HTML ER diagram from the repository root:
 Start-Process .\MySQL_ER_And_Schema\ER_Diagram\mysql_er_diagram.html
 ```
 
-![MySQL ER diagram](Screenshots/ER_diagram.png)
+![MySQL ER diagram](Screenshots/ER_Diagram.png)
 
 ### 2. Python ETL Pipeline
 
@@ -290,7 +290,7 @@ Start-Process .\MySQL_ER_And_Schema\ER_Diagram\mysql_er_diagram.html
 
 ![Business analytics procedures](Screenshots/Business_Analytic_SQL_procedure.png)
 
-![Sales metrics](Screenshots/_sales_metric.png)
+![Sales metrics](Screenshots/analysis_sales_metric.png)
 
 ![Revenue impact by category](Screenshots/revenue_impact_by_category.png)
 
