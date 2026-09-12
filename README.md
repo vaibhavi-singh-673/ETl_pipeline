@@ -213,14 +213,17 @@ it must match `GCP_PROJECT_ID` in `.env` and the project used to create both
 datasets. The warehouse SQL reads from `retailmart_raw` and writes to
 `retailmart_dw`.
 
-Run the SQL files in this order after the ETL succeeds:
+Run the SQL files in this order after the ETL succeeds. The warehouse build
+creates or replaces the warehouse tables from the raw dataset; it does not
+drop the whole warehouse dataset:
 
 ```powershell
-bq query --use_legacy_sql=false (Get-Content .\BigQuery_Warehouse\warehouse_schema.sql -Raw)
 bq query --use_legacy_sql=false (Get-Content .\BigQuery_Warehouse\build_warehouse.sql -Raw)
 bq query --use_legacy_sql=false (Get-Content .\SQL_Procedures\business_analytics_procedures.sql -Raw)
 ```
 
+`warehouse_schema.sql` documents the intended warehouse table contract. The
+executable table build is in `build_warehouse.sql`, followed by the procedures.
 This creates the `retailmart_dw` star schema and the procedures
 `sp_sales_metrics` and `sp_returns_analysis`.
 
@@ -252,7 +255,7 @@ Start-Process .\MySQL_ER_And_Schema\ER_Diagram\mysql_er_diagram.html
 
 ### 3. BigQuery Warehouse
 
-- `BigQuery_Warehouse/warehouse_schema.sql` - warehouse DDL.
+- `BigQuery_Warehouse/warehouse_schema.sql` - warehouse table contract.
 - `BigQuery_Warehouse/build_warehouse.sql` - raw-to-warehouse transformation.
 - `retailmart_raw` - raw source tables.
 - `retailmart_dw` - analytical dimensions and fact tables.

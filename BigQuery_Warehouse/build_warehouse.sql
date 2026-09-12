@@ -4,14 +4,10 @@
 -- ============================================================
 
 -- ------------------------------------------------------------
--- 1. RESET WAREHOUSE DATASET
+-- 1. PREPARE WAREHOUSE DATASET
 -- ------------------------------------------------------------
 
-DROP SCHEMA IF EXISTS
-`retailmart-analytics-508414.retailmart_dw`
-CASCADE;
-
-CREATE SCHEMA
+CREATE SCHEMA IF NOT EXISTS
 `retailmart-analytics-508414.retailmart_dw`
 OPTIONS (location = 'US');
 
@@ -20,7 +16,7 @@ OPTIONS (location = 'US');
 -- 2. DIM_DATE
 -- ------------------------------------------------------------
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
 `retailmart-analytics-508414.retailmart_dw.dim_date`
 AS
 
@@ -48,7 +44,7 @@ FROM UNNEST(
 -- 3. DIM_STORE
 -- ------------------------------------------------------------
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
 `retailmart-analytics-508414.retailmart_dw.dim_store`
 AS
 
@@ -65,7 +61,7 @@ WHERE store_id IS NOT NULL;
 -- 4. DIM_CUSTOMER
 -- ------------------------------------------------------------
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
 `retailmart-analytics-508414.retailmart_dw.dim_customer`
 AS
 
@@ -87,7 +83,7 @@ FROM
 -- 5. DIM_PRODUCT
 -- ------------------------------------------------------------
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
 `retailmart-analytics-508414.retailmart_dw.dim_product`
 AS
 
@@ -111,7 +107,7 @@ ON p.category_id = c.category_id;
 -- 6. FACT_SALES
 -- ------------------------------------------------------------
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
 `retailmart-analytics-508414.retailmart_dw.fact_sales`
 AS
 
@@ -135,7 +131,7 @@ FROM
 -- 7. FACT_SALES_ITEM
 -- ------------------------------------------------------------
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
 `retailmart-analytics-508414.retailmart_dw.fact_sales_item`
 AS
 
@@ -161,7 +157,7 @@ ON si.transaction_id = t.transaction_id;
 -- 8. FACT_RETURNS
 -- ------------------------------------------------------------
 
-CREATE TABLE
+CREATE OR REPLACE TABLE
 `retailmart-analytics-508414.retailmart_dw.fact_returns`
 AS
 
