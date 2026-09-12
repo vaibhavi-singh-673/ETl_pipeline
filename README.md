@@ -46,7 +46,7 @@ Run these commands in the VS Code PowerShell terminal from the repository root:
 To open the styled ER diagram directly:
 
 ```powershell
-Start-Process .\diagrams\retailmart_database_diagram.html
+Start-Process .\MySQL_ER_And_Schema\ER_Diagram\mysql_er_diagram.html
 ```
 
 To generate the project analytics report from live BigQuery results:
@@ -69,13 +69,13 @@ created; skip the first command and continue with the user access setup.
 ```powershell
 $mysql = "C:\Program Files\MySQL\MySQL Server 9.7\bin\mysql.exe"
 Set-Location "C:\Users\vaibhavi\Desktop\data_pipeline"
-Get-Content .\mysql\schema.sql -Raw | & $mysql -u root -p
+Get-Content .\MySQL_ER_And_Schema\Schema\mysql_schema.sql -Raw | & $mysql -u root -p
 & $mysql -u retailmart_user -p -D retailmart -e "SHOW TABLES;"
 ```
 
 If `retailmart_user` returns `ERROR 1045 (28000)`, log in as MySQL root and
 create or reset the ETL account. Replace `YOUR_PASSWORD` with the same value
-used for `MYSQL_PASSWORD` in `etl/.env`:
+used for `MYSQL_PASSWORD` in `Python_ETL_Pipeline/.env`:
 
 ```powershell
 & $mysql -u root -p -e "CREATE USER IF NOT EXISTS 'retailmart_user'@'localhost' IDENTIFIED BY 'YOUR_PASSWORD'; ALTER USER 'retailmart_user'@'localhost' IDENTIFIED BY 'YOUR_PASSWORD'; GRANT ALL PRIVILEGES ON retailmart.* TO 'retailmart_user'@'localhost'; FLUSH PRIVILEGES;"
@@ -98,10 +98,10 @@ MySQL, use CSV mode in step 3.
 ```powershell
 python -m venv .\venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r .\etl\requirements.txt
+python -m pip install -r .\Python_ETL_Pipeline\requirements.txt
 ```
 
-Set these values in `etl/.env`:
+Set these values in `Python_ETL_Pipeline/.env`:
 
 ```env
 GCP_PROJECT_ID=[YOUR_PROJECT_ID]
@@ -126,13 +126,13 @@ gcloud config set project [YOUR_PROJECT_ID]
 ### 3. Run the ETL
 
 ```powershell
-python .\etl\etl.py --source mysql
+python .\Python_ETL_Pipeline\etl_pipeline.py --source mysql
 ```
 
 For a local CSV test that bypasses MySQL:
 
 ```powershell
-python .\etl\etl.py --source csv --data-dir .\sample_data
+python .\Python_ETL_Pipeline\etl_pipeline.py --source csv --data-dir .\Sample_Data
 ```
 
 The ETL validates keys and calculations, then loads the eight source tables
@@ -144,9 +144,9 @@ Replace `[YOUR_PROJECT_ID]` in the SQL files with your actual project ID if
 needed. Run these commands in order:
 
 ```powershell
-bq query --use_legacy_sql=false (Get-Content .\bigquery\schema.sql -Raw)
-bq query --use_legacy_sql=false (Get-Content .\bigquery\build_warehouse.sql -Raw)
-bq query --use_legacy_sql=false (Get-Content .\bigquery\procedures.sql -Raw)
+bq query --use_legacy_sql=false (Get-Content .\BigQuery_Warehouse\warehouse_schema.sql -Raw)
+bq query --use_legacy_sql=false (Get-Content .\BigQuery_Warehouse\build_warehouse.sql -Raw)
+bq query --use_legacy_sql=false (Get-Content .\SQL_Procedures\business_analytics_procedures.sql -Raw)
 ```
 
 The warehouse build recreates `retailmart_dw` and populates its dimensions and
@@ -162,7 +162,7 @@ bq query --use_legacy_sql=false "CALL \`[YOUR_PROJECT_ID].retailmart_dw.sp_retur
 ### Troubleshooting
 
 - For MySQL access denied errors, reset the `retailmart_user` password and
-  grant it access to `retailmart`. Use the same password in `etl/.env`.
+  grant it access to `retailmart`. Use the same password in `Python_ETL_Pipeline/.env`.
 - For missing Google credentials, run `gcloud auth application-default login`.
 - For missing BigQuery tables, run the ETL successfully before the warehouse
   SQL files.
@@ -206,28 +206,28 @@ the SQL and Python source files. In particular:
   as project-specific implementation files rather than copied reference output.
 
 Any external library usage is limited to the dependencies listed in
-`etl/requirements.txt` and their documented APIs.
+`Python_ETL_Pipeline/requirements.txt` and their documented APIs.
 
 ## View and Check the ER Diagram
 
-The diagram files are in `diagrams`:
+The diagram files are in `MySQL_ER_And_Schema/ER_Diagram`:
 
-- `retailmart_database_diagram.html` is the easiest version to view. From the repository root:
+- `mysql_er_diagram.html` is the easiest version to view. From the repository root:
 
   ```powershell
-  Start-Process .\diagrams\retailmart_database_diagram.html
+  Start-Process .\MySQL_ER_And_Schema\ER_Diagram\mysql_er_diagram.html
   ```
 
-- `retailmart_database_diagram.mmd` is the Mermaid source. Install a Mermaid preview
+- `mysql_er_diagram.mmd` is the Mermaid source. Install a Mermaid preview
   extension in VS Code, open the file, and use its Mermaid preview command.
-- `retailmart_database_diagram.dot` is the Graphviz source. If Graphviz is installed, create
+- `mysql_er_diagram.dot` is the Graphviz source. If Graphviz is installed, create
   a PNG with:
 
   ```powershell
-  dot -Tpng .\diagrams\retailmart_database_diagram.dot -o .\diagrams\retailmart_database_diagram.png
+  dot -Tpng .\MySQL_ER_And_Schema\ER_Diagram\mysql_er_diagram.dot -o .\MySQL_ER_And_Schema\ER_Diagram\mysql_er_diagram.png
   ```
 
-Check the diagram against `mysql/schema.sql`. Every table should be present,
+Check the diagram against `MySQL_ER_And_Schema/Schema/mysql_schema.sql`. Every table should be present,
 primary keys should be marked `PK`, and foreign-key relationships should match
 the constraints in the MySQL schema.
 
@@ -257,7 +257,7 @@ or the VS Code MySQL terminal.
 
 ### ETL Validation and Load
 
-Show the terminal output from `python .\etl\etl.py --source mysql`, including
+Show the terminal output from `python .\02_python_etl\etl_pipeline.py --source mysql`, including
 successful validation and BigQuery loading messages.
 
 ```text
@@ -304,11 +304,11 @@ Show the styled diagram opened with the `Start-Process` command above.
 The operational database is normalized and includes primary keys, foreign keys,
 constraints, indexes, and appropriate MySQL data types.
 
-- `mysql/schema.sql` - MySQL database and table definitions.
-- `diagrams/retailmart_database_diagram.html` - browser-renderable ER diagram.
-- `diagrams/retailmart_database_diagram.mmd` - Mermaid diagram source.
-- `diagrams/retailmart_database_diagram.dot` - Graphviz diagram source.
-- `diagrams/retailmart_database_diagram.png` - diagram image.
+- `MySQL_ER_And_Schema/Schema/mysql_schema.sql` - MySQL database and table definitions.
+- `MySQL_ER_And_Schema/ER_Diagram/mysql_er_diagram.html` - browser-renderable ER diagram.
+- `MySQL_ER_And_Schema/ER_Diagram/mysql_er_diagram.mmd` - Mermaid diagram source.
+- `MySQL_ER_And_Schema/ER_Diagram/mysql_er_diagram.dot` - Graphviz diagram source.
+- `MySQL_ER_And_Schema/ER_Diagram/mysql_er_diagram.png` - diagram image.
 
 ### b. Python ETL Pipeline: MySQL to BigQuery Migration
 
@@ -316,9 +316,9 @@ The ETL extracts all eight source tables from MySQL or CSV, transforms dates,
 identifiers, booleans, and numeric fields, validates data quality, and loads
 the results into BigQuery raw tables.
 
-- `etl/etl.py` - extraction, transformation, validation, logging, and loading.
-- `etl/requirements.txt` - Python dependencies.
-- `sample_data/` - CSV source data for local testing.
+- `Python_ETL_Pipeline/etl_pipeline.py` - extraction, transformation, validation, logging, and loading.
+- `Python_ETL_Pipeline/requirements.txt` - Python dependencies.
+- `Sample_Data/` - CSV source data for local testing.
 
 ### c. BigQuery Data Warehouse Schema Design
 
@@ -326,8 +326,8 @@ The warehouse is organized as a star schema with dimensions and fact tables.
 Fact tables are partitioned by event date and clustered for common analytical
 filters.
 
-- `bigquery/schema.sql` - warehouse DDL, partitioning, and clustering.
-- `bigquery/build_warehouse.sql` - raw-to-warehouse transformation.
+- `BigQuery_Warehouse/warehouse_schema.sql` - warehouse DDL, partitioning, and clustering.
+- `BigQuery_Warehouse/build_warehouse.sql` - raw-to-warehouse transformation.
 - `retailmart_raw` - source-shaped BigQuery tables loaded by the ETL.
 - `retailmart_dw` - analytical dimensions and facts.
 
@@ -336,7 +336,7 @@ filters.
 The procedures provide business-ready sales and returns analysis from the
 BigQuery warehouse.
 
-- `bigquery/procedures.sql` - procedure definitions.
+- `SQL_Procedures/business_analytics_procedures.sql` - procedure definitions.
 - `sp_sales_metrics` - monthly revenue, gross sales, discounts, tax,
   transaction count, MoM comparison, and YoY comparison.
 - `sp_returns_analysis` - sold quantity, returned quantity, return rate, and

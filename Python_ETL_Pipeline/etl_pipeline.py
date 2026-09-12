@@ -6,10 +6,10 @@ Usage
 -----
 
 CSV mode:
-    python etl.py --source csv --data-dir ../sample_data
+    python etl_pipeline.py --source csv --data-dir ../Sample_Data
 
 MySQL mode:
-    python etl.py --source mysql
+    python etl_pipeline.py --source mysql
 
 Required .env variables
 -----------------------
@@ -79,7 +79,7 @@ from google.cloud import bigquery
 ETL_DIRECTORY = Path(__file__).resolve().parent
 PROJECT_ROOT = ETL_DIRECTORY.parent
 
-# Try .env inside etl/ first.
+# Try .env inside Python_ETL_Pipeline/ first.
 # If it doesn't exist, try .env in the project root.
 env_loaded = load_dotenv(ETL_DIRECTORY / ".env")
 

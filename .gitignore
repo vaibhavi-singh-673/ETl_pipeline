@@ -1,8 +1,8 @@
 # Environment files and secrets
 .env
 .env.*
-etl/.env
-etl/.env.example
+Python_ETL_Pipeline/.env
+Python_ETL_Pipeline/.env.example
 
 # Python virtual environments
 venv/

@@ -13,7 +13,7 @@ from google.cloud import bigquery
 
 REPORT_DIRECTORY = Path(__file__).resolve().parent
 PROJECT_ROOT = REPORT_DIRECTORY.parent
-load_dotenv(REPORT_DIRECTORY.parent / "etl" / ".env")
+load_dotenv(REPORT_DIRECTORY.parent / "Python_ETL_Pipeline" / ".env")
 load_dotenv(PROJECT_ROOT / ".env")
 
 START_MARKER = "<!-- LIVE_REPORT_START -->"
@@ -184,7 +184,7 @@ def main() -> None:
 
     if not args.project or args.project == "[YOUR_PROJECT_ID]":
         raise EnvironmentError(
-            "Set GCP_PROJECT_ID in etl/.env or pass --project."
+            "Set GCP_PROJECT_ID in Python_ETL_Pipeline/.env or pass --project."
         )
 
     start_date = parse_date(args.start_date)
