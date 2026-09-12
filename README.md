@@ -252,6 +252,14 @@ Show the styled diagram opened with the `Start-Process` command above.
 [Add ER diagram screenshot here]
 ```
 
+### Report Diagram
+
+Show the styled diagram opened with the `Start-Process` command above.
+
+```text
+[Add Report diagram screenshot here]
+```
+
 ## Deliverables
 
 - `mysql/schema.sql` - normalized operational schema.
