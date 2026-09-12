@@ -310,7 +310,6 @@ Start-Process .\Report\retailmart_analytics_report.html
 
 ## Notes
 
-- CSV mode is the quickest way to test the complete pipeline.
 - The warehouse uses date, customer, product, and store dimensions with sales,
   sales-item, and returns fact tables.
 - `store_id` is retained from the source because no store master table is provided.
