@@ -49,6 +49,17 @@ To open the styled ER diagram directly:
 Start-Process .\diagrams\retailmart_database_diagram.html
 ```
 
+To generate the project analytics report from live BigQuery results:
+
+```powershell
+python .\reports\generate_report.py --start-date 2024-01-01 --end-date 2024-12-31
+Start-Process .\reports\retailmart_analytics_report.html
+```
+
+The generator calls `sp_sales_metrics` and `sp_returns_analysis` in the
+configured BigQuery warehouse and writes the returned rows into the HTML page.
+Run it again whenever you want a new reporting period.
+
 ### 1. Create or verify the MySQL schema
 
 Skip schema creation if the `retailmart` database and tables already exist.
@@ -177,6 +188,16 @@ Check the diagram against `mysql/schema.sql`. Every table should be present,
 primary keys should be marked `PK`, and foreign-key relationships should match
 the constraints in the MySQL schema.
 
+## View the HTML Analytics Report
+
+Open `reports/retailmart_analytics_report.html` to view the project as a
+browser-friendly report. It includes the pipeline summary, data-quality checks,
+warehouse model, and explanations of both BigQuery procedures.
+
+The report page is a static presentation of the project. Run the BigQuery
+procedure commands in the report or in the terminal to retrieve current live
+sales and returns results for a selected date range.
+
 ## Screenshots
 
 Add screenshots below when presenting the project. Each placeholder describes
@@ -231,6 +252,8 @@ Show the styled diagram opened with the `Start-Process` command above.
 - `diagrams/retailmart_database_diagram.html` - browser-renderable ER diagram.
 - `diagrams/retailmart_database_diagram.mmd` - Mermaid ER diagram source.
 - `diagrams/retailmart_database_diagram.dot` - Graphviz ER diagram source.
+- `reports/retailmart_analytics_report.html` - browser-renderable analytics report.
+- `reports/generate_report.py` - generates the HTML report from live BigQuery data.
 - `etl/etl.py` - pandas, MySQL, and BigQuery ETL with validation and logging.
 - `etl/requirements.txt` - Python dependencies.
 - `bigquery/schema.sql` - dimensional warehouse DDL.

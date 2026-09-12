@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RetailMart Analytics Report</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #697586;
+      --paper: #f5f2ec;
+      --surface: #fffdf9;
+      --line: #ded8cd;
+      --teal: #167d7f;
+      --coral: #d95d39;
+      --gold: #c58b2a;
+      --green: #2b8a62;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Arial, sans-serif;
+    }
+    .page { width: min(1280px, 100%); margin: auto; padding: 32px 24px 56px; }
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 32px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid var(--line);
+    }
+    .eyebrow {
+      margin: 0 0 12px;
+      color: var(--coral);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+    h1, h2, h3 { margin-top: 0; }
+    h1 {
+      max-width: 650px;
+      margin-bottom: 14px;
+      font-family: Georgia, serif;
+      font-size: clamp(32px, 5vw, 58px);
+      line-height: .95;
+      letter-spacing: -.03em;
+    }
+    .hero p { max-width: 430px; color: var(--muted); line-height: 1.6; }
+    .section { margin-top: 32px; }
+    .section-heading { display: flex; justify-content: space-between; align-items: end; gap: 24px; }
+    .section-heading h2 { margin-bottom: 6px; font-family: Georgia, serif; font-size: 24px; }
+    .section-heading p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-top: 22px;
+    }
+    .metric, .report-card, .quality-table, .warehouse {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      box-shadow: 0 12px 28px rgba(56, 47, 35, .06);
+    }
+    .metric { padding: 16px; }
+    .metric strong { display: block; font-family: Georgia, serif; font-size: 28px; }
+    .metric span { color: var(--muted); font-size: 12px; }
+    .metric.teal { border-top: 4px solid var(--teal); }
+    .metric.coral { border-top: 4px solid var(--coral); }
+    .metric.gold { border-top: 4px solid var(--gold); }
+    .metric.green { border-top: 4px solid var(--green); }
+    .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 22px; }
+    .report-card { padding: 18px; }
+    .report-card h3 { margin-bottom: 8px; font-family: Georgia, serif; font-size: 20px; }
+    .report-card p { color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .report-card code { display: block; margin-top: 14px; padding: 10px; overflow-x: auto; background: #f0f7f5; color: #145e60; font: 11px/1.45 Consolas, monospace; }
+    .quality-table { width: 100%; margin-top: 22px; border-collapse: separate; border-spacing: 0; overflow: hidden; }
+    .quality-table th, .quality-table td { padding: 10px 12px; border-bottom: 1px solid var(--line); font-size: 12px; text-align: left; }
+    .quality-table th { background: #eef8f6; color: #145e60; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+    .quality-table tr:last-child td { border-bottom: 0; }
+    .pass { color: var(--green); font-weight: 700; }
+    .warehouse { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; margin-top: 22px; overflow: hidden; }
+    .warehouse div { padding: 18px; border-right: 1px solid var(--line); }
+    .warehouse div:last-child { border-right: 0; }
+    .warehouse h3 { margin-bottom: 10px; font-family: Georgia, serif; }
+    .warehouse p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.45; }
+    .live-results { overflow: hidden; }
+    .live-layout { display: grid; grid-template-columns: minmax(0, 1fr) 250px; gap: 14px; margin-top: 18px; align-items: start; }
+    .live-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .live-card { overflow: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+    .live-card h3 { margin: 0; padding: 14px 16px; font-family: Georgia, serif; font-size: 18px; }
+    .live-table { width: 100%; border-collapse: collapse; font-size: 11px; white-space: nowrap; }
+    .live-table th, .live-table td { padding: 8px 10px; border-top: 1px solid var(--line); text-align: right; }
+    .live-table th { background: #eef8f6; color: #145e60; font-size: 10px; text-align: right; text-transform: uppercase; }
+    .live-table th:first-child, .live-table td:first-child { text-align: left; }
+    .empty-result { padding: 14px 16px; color: var(--muted); font-size: 12px; }
+    .chart-card { padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+    .chart-card h3 { margin: 0 0 6px; font-family: Georgia, serif; font-size: 18px; }
+    .chart-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
+    .pie-chart { width: 150px; height: 150px; margin: 18px auto; border-radius: 50%; }
+    .pie-legend { display: grid; gap: 7px; margin: 0; padding: 0; list-style: none; color: var(--muted); font-size: 11px; }
+    .pie-legend li { display: flex; align-items: center; gap: 7px; }
+    .pie-legend i { width: 9px; height: 9px; border-radius: 50%; }
+    .pie-legend strong { margin-left: auto; color: var(--ink); }
+    .footer { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+    @media (max-width: 800px) {
+      .hero, .section-heading { display: block; }
+      .hero p { margin-top: 22px; }
+      .metrics, .report-grid, .warehouse, .live-grid { grid-template-columns: 1fr 1fr; }
+      .live-layout { grid-template-columns: 1fr; }
+      .warehouse div:nth-child(2) { border-right: 0; }
+      .warehouse div:last-child { grid-column: 1 / -1; border-top: 1px solid var(--line); }
+    }
+    @media (max-width: 520px) {
+      .page { padding: 28px 16px 48px; }
+      .metrics, .report-grid, .warehouse, .live-grid { grid-template-columns: 1fr; }
+      .warehouse div, .warehouse div:nth-child(2) { border-right: 0; border-bottom: 1px solid var(--line); }
+      .warehouse div:last-child { grid-column: auto; border-bottom: 0; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">RetailMart / Analytics Report</p>
+        <h1>From retail operations to useful decisions.</h1>
+        <p>One view of the validated source data, warehouse model, and business reports produced by the RetailMart pipeline.</p>
+      </div>
+      <p><strong>Reporting period</strong><br>Use the BigQuery procedure commands below to choose the period and return live results.</p>
+    </header>
+
+    <section class="section">
+      <div class="section-heading">
+        <div><h2>Pipeline at a glance</h2><p>Source data moves through validation before it becomes reporting data.</p></div>
+      </div>
+      <div class="metrics">
+        <div class="metric teal"><strong>8</strong><span>Source tables</span></div>
+        <div class="metric coral"><strong>3</strong><span>Warehouse dimensions</span></div>
+        <div class="metric gold"><strong>3</strong><span>Warehouse fact tables</span></div>
+        <div class="metric green"><strong>2</strong><span>Business procedures</span></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading"><div><h2>Data quality</h2><p>Checks performed before loading data into BigQuery.</p></div></div>
+      <table class="quality-table">
+        <thead><tr><th>Check</th><th>Result</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>Duplicate primary keys</td><td class="pass">0 issues</td><td>Source identifiers are unique.</td></tr>
+          <tr><td>Foreign-key orphans</td><td class="pass">0 issues</td><td>Relationships point to existing records.</td></tr>
+          <tr><td>Sales item totals</td><td class="pass">0 mismatches</td><td>Line totals agree with quantity multiplied by unit price.</td></tr>
+          <tr><td>Transaction totals</td><td class="pass">0 mismatches</td><td>Transaction headers agree with their item totals.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section">
+      <div class="section-heading"><div><h2>Business reports</h2><p>These procedures return live results from the BigQuery warehouse.</p></div></div>
+      <div class="report-grid">
+        <article class="report-card">
+          <h3>Sales metrics</h3>
+          <p>Monthly revenue, gross sales, discounts, tax, transaction count, month-over-month change, and year-over-year change.</p>
+          <code>CALL `[YOUR_PROJECT_ID].retailmart_dw.sp_sales_metrics`(DATE('2024-01-01'), DATE('2024-12-31'));</code>
+        </article>
+        <article class="report-card">
+          <h3>Returns analysis</h3>
+          <p>Category-level sold quantity, returned quantity, return rate, and processed refund impact.</p>
+          <code>CALL `[YOUR_PROJECT_ID].retailmart_dw.sp_returns_analysis`(DATE('2024-01-01'), DATE('2024-12-31'));</code>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-heading"><div><h2>Warehouse model</h2><p>Facts store events; dimensions make those events easier to filter and explain.</p></div></div>
+      <div class="warehouse">
+        <div><h3>Dimensions</h3><p><strong>dim_date</strong><br><strong>dim_customer</strong><br><strong>dim_product</strong><br><strong>dim_store</strong></p></div>
+        <div><h3>Facts</h3><p><strong>fact_sales</strong> - transaction grain<br><strong>fact_sales_item</strong> - line-item grain<br><strong>fact_returns</strong> - return-event grain</p></div>
+        <div><h3>Source layers</h3><p><strong>retailmart_raw</strong> keeps source-shaped tables before the warehouse transformation.</p></div>
+      </div>
+    </section>
+
+    <!-- LIVE_REPORT_START -->
+    <section class="section live-results">
+      <div class="section-heading">
+        <div>
+          <h2>Live BigQuery results</h2>
+          <p>Generated from the warehouse for 2024-01-01 to 2024-12-31.</p>
+        </div>
+      </div>
+            <div class="live-layout">
+                <div class="live-grid">
+                    <article class="live-card">
+                        <h3>Monthly sales metrics</h3>
+                        <table class="live-table"><thead><tr><th>month</th><th>total revenue</th><th>gross sales</th><th>discounts</th><th>tax amount</th><th>transaction count</th><th>previous month revenue</th><th>mom revenue pct</th><th>prior year revenue</th><th>yoy revenue pct</th></tr></thead><tbody><tr><td>2024-01-01</td><td>1,605,718.65</td><td>1,411,190.00</td><td>50,411.47</td><td>244,940.12</td><td>233</td><td>-</td><td>-</td><td>-</td><td>-</td></tr><tr><td>2024-02-01</td><td>1,382,455.44</td><td>1,210,327.00</td><td>38,754.58</td><td>210,883.02</td><td>220</td><td>1,605,718.65</td><td>-13.90</td><td>-</td><td>-</td></tr><tr><td>2024-03-01</td><td>1,447,076.91</td><td>1,268,249.00</td><td>41,912.60</td><td>220,740.51</td><td>218</td><td>1,382,455.44</td><td>4.67</td><td>-</td><td>-</td></tr><tr><td>2024-04-01</td><td>1,250,099.31</td><td>1,091,997.00</td><td>32,590.83</td><td>190,693.14</td><td>183</td><td>1,447,076.91</td><td>-13.61</td><td>-</td><td>-</td></tr><tr><td>2024-05-01</td><td>1,397,578.57</td><td>1,220,563.00</td><td>36,174.34</td><td>213,189.91</td><td>224</td><td>1,250,099.31</td><td>11.80</td><td>-</td><td>-</td></tr><tr><td>2024-06-01</td><td>1,207,706.30</td><td>1,053,388.00</td><td>29,908.06</td><td>184,226.36</td><td>189</td><td>1,397,578.57</td><td>-13.59</td><td>-</td><td>-</td></tr><tr><td>2024-07-01</td><td>1,482,307.31</td><td>1,289,567.00</td><td>33,374.32</td><td>226,114.63</td><td>203</td><td>1,207,706.30</td><td>22.74</td><td>-</td><td>-</td></tr><tr><td>2024-08-01</td><td>1,193,012.30</td><td>1,045,502.00</td><td>34,474.60</td><td>181,984.90</td><td>189</td><td>1,482,307.31</td><td>-19.52</td><td>-</td><td>-</td></tr><tr><td>2024-09-01</td><td>1,316,377.33</td><td>1,145,777.00</td><td>30,202.98</td><td>200,803.31</td><td>202</td><td>1,193,012.30</td><td>10.34</td><td>-</td><td>-</td></tr><tr><td>2024-10-01</td><td>1,542,662.17</td><td>1,341,629.00</td><td>34,288.17</td><td>235,321.34</td><td>235</td><td>1,316,377.33</td><td>17.19</td><td>-</td><td>-</td></tr><tr><td>2024-11-01</td><td>1,512,079.13</td><td>1,325,493.00</td><td>44,070.00</td><td>230,656.13</td><td>217</td><td>1,542,662.17</td><td>-1.98</td><td>-</td><td>-</td></tr><tr><td>2024-12-01</td><td>1,496,153.26</td><td>1,304,922.00</td><td>36,995.50</td><td>228,226.76</td><td>199</td><td>1,512,079.13</td><td>-1.05</td><td>-</td><td>-</td></tr></tbody></table>
+                    </article>
+                    <article class="live-card">
+                        <h3>Returns by category</h3>
+                        <table class="live-table"><thead><tr><th>category id</th><th>category name</th><th>sold quantity</th><th>returned quantity</th><th>return rate pct</th><th>revenue impact</th></tr></thead><tbody><tr><td>1</td><td>Electronics</td><td>1562</td><td>49</td><td>3.14</td><td>52,365.00</td></tr><tr><td>4</td><td>Home &amp; Kitchen</td><td>1587</td><td>48</td><td>3.02</td><td>43,308.00</td></tr><tr><td>9</td><td>Footwear</td><td>1462</td><td>34</td><td>2.33</td><td>43,274.00</td></tr><tr><td>2</td><td>Clothing</td><td>1524</td><td>43</td><td>2.82</td><td>30,676.00</td></tr><tr><td>10</td><td>Accessories</td><td>1511</td><td>22</td><td>1.46</td><td>23,884.00</td></tr><tr><td>8</td><td>Toys &amp; Games</td><td>1442</td><td>37</td><td>2.57</td><td>19,676.00</td></tr><tr><td>6</td><td>Sports &amp; Fitness</td><td>1531</td><td>22</td><td>1.44</td><td>14,583.00</td></tr><tr><td>3</td><td>Groceries</td><td>1530</td><td>51</td><td>3.33</td><td>13,740.00</td></tr><tr><td>5</td><td>Beauty &amp; Personal Care</td><td>1527</td><td>34</td><td>2.23</td><td>8,526.00</td></tr><tr><td>7</td><td>Books &amp; Stationery</td><td>1470</td><td>45</td><td>3.06</td><td>7,104.00</td></tr></tbody></table>
+                    </article>
+                </div>
+                <aside class="chart-card">
+                    <h3>Returned quantity</h3>
+                    <p>Share of returned units by category.</p>
+                    <div class="pie-chart" style="background: conic-gradient(#167d7f 0.00% 12.73%, #d95d39 12.73% 25.19%, #c58b2a 25.19% 34.03%, #2b8a62 34.03% 45.19%, #7867a8 45.19% 50.91%, #167d7f 50.91% 60.52%, #d95d39 60.52% 66.23%, #c58b2a 66.23% 79.48%, #2b8a62 79.48% 88.31%, #7867a8 88.31% 100.00%)"></div><ul class="pie-legend"><li><i style="background:#167d7f"></i>Electronics <strong>49</strong></li><li><i style="background:#d95d39"></i>Home &amp; Kitchen <strong>48</strong></li><li><i style="background:#c58b2a"></i>Footwear <strong>34</strong></li><li><i style="background:#2b8a62"></i>Clothing <strong>43</strong></li><li><i style="background:#7867a8"></i>Accessories <strong>22</strong></li><li><i style="background:#167d7f"></i>Toys &amp; Games <strong>37</strong></li><li><i style="background:#d95d39"></i>Sports &amp; Fitness <strong>22</strong></li><li><i style="background:#c58b2a"></i>Groceries <strong>51</strong></li><li><i style="background:#2b8a62"></i>Beauty &amp; Personal Care <strong>34</strong></li><li><i style="background:#7867a8"></i>Books &amp; Stationery <strong>45</strong></li></ul>
+                </aside>
+      </div>
+    </section>
+    <!-- LIVE_REPORT_END -->
+
+    <footer class="footer">Generated as a project presentation page. Run the ETL and BigQuery procedures for current live values.</footer>
+  </main>
+</body>
+</html>
