@@ -301,7 +301,7 @@ Start-Process .\MySQL_ER_And_Schema\ER_Diagram\mysql_er_diagram.html
 
 ![Generated report](Screenshots/Report_1.png)
 
-![Report details](Screenshots/report_2.png)
+![Report details](Screenshots/Report_2.png)
 
 ![Report results](Screenshots/Report_3.png)
 
