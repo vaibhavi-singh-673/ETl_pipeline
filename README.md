@@ -1,5 +1,43 @@
 # RetailMart Analytics - Data Engineering Submission
 
+## Project Overview
+
+RetailMart Analytics is an end-to-end retail data pipeline. It extracts
+operational data from MySQL or CSV files, validates and transforms the data
+with Python and pandas, loads raw tables into BigQuery, and builds an
+analytics-ready warehouse for reporting.
+
+The project covers customers, products, categories, sales transactions, sales
+items, vouchers, voucher redemptions, and returns. It includes data-quality
+checks, a dimensional warehouse, stored procedures, and database diagrams.
+
+## What This Project Demonstrates
+
+- MySQL schema design with primary keys, foreign keys, constraints, and indexes.
+- Python ETL development using pandas, MySQL Connector, and the BigQuery client.
+- Validation of duplicate keys, orphan records, and calculated sales totals.
+- BigQuery raw tables and a star schema with dimensions and fact tables.
+- Business reporting procedures for sales metrics and returns analysis.
+- Documentation and visual database modeling with Mermaid and Graphviz.
+
+## Data Flow
+
+```text
+MySQL or CSV files
+  |
+  v
+Python ETL: extract, transform, validate
+  |
+  v
+BigQuery raw tables
+  |
+  v
+BigQuery warehouse: dimensions and facts
+  |
+  v
+Stored procedures and reporting
+```
+
 ## Run From the VS Code Terminal
 
 Run these commands in the VS Code PowerShell terminal from the repository root:
@@ -138,6 +176,54 @@ The diagram files are in `diagrams`:
 Check the diagram against `mysql/schema.sql`. Every table should be present,
 primary keys should be marked `PK`, and foreign-key relationships should match
 the constraints in the MySQL schema.
+
+## Screenshots
+
+Add screenshots below when presenting the project. Each placeholder describes
+the most useful view to capture.
+
+### MySQL Source Database
+
+Show the `retailmart` database and its eight source tables in MySQL Workbench
+or the VS Code MySQL terminal.
+
+```text
+[Add MySQL schema or SHOW TABLES screenshot here]
+```
+
+### ETL Validation and Load
+
+Show the terminal output from `python .\etl\etl.py --source mysql`, including
+successful validation and BigQuery loading messages.
+
+```text
+[Add ETL execution screenshot here]
+```
+
+### BigQuery Warehouse
+
+Show the `retailmart_raw` and `retailmart_dw` datasets, including dimension and
+fact tables.
+
+```text
+[Add BigQuery warehouse screenshot here]
+```
+
+### Analytics Procedures
+
+Show the result of `sp_sales_metrics` or `sp_returns_analysis` in BigQuery.
+
+```text
+[Add stored procedure result screenshot here]
+```
+
+### Database Relationship Diagram
+
+Show the styled diagram opened with the `Start-Process` command above.
+
+```text
+[Add ER diagram screenshot here]
+```
 
 ## Deliverables
 
