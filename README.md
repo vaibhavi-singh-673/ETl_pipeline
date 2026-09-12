@@ -23,7 +23,10 @@ checks, a dimensional warehouse, stored procedures, and database diagrams.
 ## Data Flow
 
 ```text
-MySQL or CSV files
+CSV files
+  |
+  V
+MySQL
   |
   v
 Python ETL: extract, transform, validate
@@ -35,7 +38,10 @@ BigQuery raw tables
 BigQuery warehouse: dimensions and facts
   |
   v
-Stored procedures and reporting
+Stored procedures
+  |
+  V
+Reporting
 ```
 
 ## Run From the VS Code Terminal
