@@ -299,17 +299,53 @@ Show the styled diagram opened with the `Start-Process` command above.
 
 ## Deliverables
 
-- `mysql/schema.sql` - normalized operational schema.
+### a. MySQL ER Diagram and Database Schema Design
+
+The operational database is normalized and includes primary keys, foreign keys,
+constraints, indexes, and appropriate MySQL data types.
+
+- `mysql/schema.sql` - MySQL database and table definitions.
 - `diagrams/retailmart_database_diagram.html` - browser-renderable ER diagram.
-- `diagrams/retailmart_database_diagram.mmd` - Mermaid ER diagram source.
-- `diagrams/retailmart_database_diagram.dot` - Graphviz ER diagram source.
-- `reports/retailmart_analytics_report.html` - browser-renderable analytics report.
-- `reports/generate_report.py` - generates the HTML report from live BigQuery data.
-- `etl/etl.py` - pandas, MySQL, and BigQuery ETL with validation and logging.
+- `diagrams/retailmart_database_diagram.mmd` - Mermaid diagram source.
+- `diagrams/retailmart_database_diagram.dot` - Graphviz diagram source.
+- `diagrams/retailmart_database_diagram.png` - diagram image.
+
+### b. Python ETL Pipeline: MySQL to BigQuery Migration
+
+The ETL extracts all eight source tables from MySQL or CSV, transforms dates,
+identifiers, booleans, and numeric fields, validates data quality, and loads
+the results into BigQuery raw tables.
+
+- `etl/etl.py` - extraction, transformation, validation, logging, and loading.
 - `etl/requirements.txt` - Python dependencies.
-- `bigquery/schema.sql` - dimensional warehouse DDL.
-- `bigquery/build_warehouse.sql` - source-to-star transformation.
-- `bigquery/procedures.sql` - analytics stored procedures.
+- `sample_data/` - CSV source data for local testing.
+
+### c. BigQuery Data Warehouse Schema Design
+
+The warehouse is organized as a star schema with dimensions and fact tables.
+Fact tables are partitioned by event date and clustered for common analytical
+filters.
+
+- `bigquery/schema.sql` - warehouse DDL, partitioning, and clustering.
+- `bigquery/build_warehouse.sql` - raw-to-warehouse transformation.
+- `retailmart_raw` - source-shaped BigQuery tables loaded by the ETL.
+- `retailmart_dw` - analytical dimensions and facts.
+
+### d. SQL Procedures for Business Analytics
+
+The procedures provide business-ready sales and returns analysis from the
+BigQuery warehouse.
+
+- `bigquery/procedures.sql` - procedure definitions.
+- `sp_sales_metrics` - monthly revenue, gross sales, discounts, tax,
+  transaction count, MoM comparison, and YoY comparison.
+- `sp_returns_analysis` - sold quantity, returned quantity, return rate, and
+  refund revenue impact by category.
+
+The generated HTML presentation is an additional project output:
+
+- `reports/generate_report.py` - fetches live procedure results from BigQuery.
+- `reports/retailmart_analytics_report.html` - browser-renderable report.
 
 ## Architecture
 
