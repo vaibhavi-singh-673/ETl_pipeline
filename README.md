@@ -257,9 +257,7 @@ Open the HTML ER diagram from the repository root:
 Start-Process .\MySQL_ER_And_Schema\ER_Diagram\mysql_er_diagram.html
 ```
 
-![MySQL ER diagram](Screenshots/ER_diagram_1.png)
-
-![MySQL table relationships](Screenshots/ER_diagram_2.png)
+![MySQL ER diagram](Screenshots/ER_diagram.png)
 
 ### 2. Python ETL Pipeline
 
@@ -301,11 +299,11 @@ Start-Process .\MySQL_ER_And_Schema\ER_Diagram\mysql_er_diagram.html
 - `Report/generate_report.py` - generates the report from live BigQuery results.
 - `Report/retailmart_analytics_report.html` - browser-renderable report.
 
-![Generated report](Screenshots/Report_1_html_site.png)
+![Generated report](Screenshots/Report_1.png)
 
-![Report details](Screenshots/report_2_html_site.png)
+![Report details](Screenshots/report_2.png)
 
-![Report results](Screenshots/Report_3_html_site.png)
+![Report results](Screenshots/Report_3.png)
 
 ## Generate the Report
 
