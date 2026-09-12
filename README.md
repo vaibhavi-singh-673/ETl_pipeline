@@ -7,8 +7,19 @@ reporting warehouse with sales and returns procedures.
 ## Pipeline
 
 ```text
-CSV or MySQL -> Python ETL -> BigQuery raw tables
-             -> BigQuery star schema -> analytics procedures and report
+MySQL or CSV files
+  |
+  v
+Python ETL: extract, transform, validate
+  |
+  v
+BigQuery raw tables
+  |
+  v
+BigQuery warehouse: dimensions and facts
+  |
+  v
+Stored procedures and reporting
 ```
 
 ## Requirements
