@@ -341,7 +341,7 @@ or the VS Code MySQL terminal.
 
 ### ETL Validation and Load
 
-Show the terminal output from `python .\Python_ETL_Pipeline\etl_pipeline.py --source mysql`, including
+Show the terminal output from `python .\02_python_etl\etl_pipeline.py --source mysql`, including
 successful validation and BigQuery loading messages.
 
 ```text
