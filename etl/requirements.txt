@@ -1,0 +1,5 @@
+pandas>=1.5,<3
+google-cloud-bigquery>=3.0
+mysql-connector-python>=8.0
+python-dotenv>=1.0
+pyarrow>=10
