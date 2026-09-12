@@ -1,0 +1,28 @@
+flowchart LR
+    categories["<div class='table-card'><div class='table-title'>CATEGORIES</div><div class='table-row'><b>PK</b>category_id</div><div class='table-row'>category_name</div><div class='table-row'>description</div></div>"]
+    products["<div class='table-card'><div class='table-title'>PRODUCTS</div><div class='table-row'><b>PK</b>product_id</div><div class='table-row'><b>FK</b>category_id</div><div class='table-row'>product_name</div><div class='table-row'>unit_price</div><div class='table-row'>cost_price</div><div class='table-row'>stock_quantity</div><div class='table-row'>is_active</div></div>"]
+    customers["<div class='table-card'><div class='table-title'>CUSTOMERS</div><div class='table-row'><b>PK</b>customer_id</div><div class='table-row'>first_name</div><div class='table-row'>last_name</div><div class='table-row'>email</div><div class='table-row'>phone</div><div class='table-row'>city</div><div class='table-row'>registration_date</div><div class='table-row'>loyalty_tier</div></div>"]
+    transactions["<div class='table-card'><div class='table-title'>SALES TRANSACTIONS</div><div class='table-row'><b>PK</b>transaction_id</div><div class='table-row'><b>FK</b>customer_id</div><div class='table-row'>store_id</div><div class='table-row'>transaction_date</div><div class='table-row'>transaction_time</div><div class='table-row'>payment_method</div><div class='table-row'>total_amount</div><div class='table-row'>discount_amount</div><div class='table-row'>tax_amount</div><div class='table-row'>net_amount</div></div>"]
+    items["<div class='table-card'><div class='table-title'>SALES ITEMS</div><div class='table-row'><b>PK</b>item_id</div><div class='table-row'><b>FK</b>transaction_id</div><div class='table-row'><b>FK</b>product_id</div><div class='table-row'>quantity</div><div class='table-row'>unit_price</div><div class='table-row'>line_total</div></div>"]
+    vouchers["<div class='table-card'><div class='table-title'>VOUCHERS</div><div class='table-row'><b>PK</b>voucher_id</div><div class='table-row'>voucher_code</div><div class='table-row'>voucher_type</div><div class='table-row'>discount_value</div><div class='table-row'>min_purchase_amount</div><div class='table-row'>max_discount_amount</div><div class='table-row'>valid_from</div><div class='table-row'>valid_to</div><div class='table-row'>is_active</div></div>"]
+    redemptions["<div class='table-card'><div class='table-title'>VOUCHER REDEMPTIONS</div><div class='table-row'><b>PK</b>redemption_id</div><div class='table-row'><b>FK</b>voucher_id</div><div class='table-row'><b>FK</b>transaction_id</div><div class='table-row'><b>FK</b>customer_id</div><div class='table-row'>redemption_date</div><div class='table-row'>discount_applied</div></div>"]
+    returns["<div class='table-card'><div class='table-title'>RETURNS</div><div class='table-row'><b>PK</b>return_id</div><div class='table-row'><b>FK</b>transaction_id</div><div class='table-row'><b>FK</b>item_id</div><div class='table-row'><b>FK</b>customer_id</div><div class='table-row'><b>FK</b>product_id</div><div class='table-row'>return_date</div><div class='table-row'>return_quantity</div><div class='table-row'>return_reason</div><div class='table-row'>refund_amount</div><div class='table-row'>refund_status</div></div>"]
+
+    categories --> products
+    customers --> transactions
+    transactions --> items
+    products --> items
+    vouchers --> redemptions
+    customers --> redemptions
+    transactions --> redemptions
+    transactions --> returns
+    items --> returns
+    customers --> returns
+    products --> returns
+
+    classDef master fill:#eef8f6,stroke:#167d7f,color:#1f2933,stroke-width:1.8px;
+    classDef activity fill:#fff1e8,stroke:#d95d39,color:#1f2933,stroke-width:1.8px;
+    classDef reference fill:#fff7df,stroke:#c58b2a,color:#1f2933,stroke-width:1.8px;
+    class categories,products,customers master;
+    class transactions,items,returns activity;
+    class vouchers,redemptions reference;
