@@ -325,7 +325,7 @@ Start-Process .\MySQL_ER_And_Schema\ER_Diagram\mysql_er_diagram.html
 
 ![Business analytics procedures](Screenshots/Business_Analytic_SQL_procedure.png)
 
-![Sales metrics](Screenshots/analysis_sales_metric.png)
+![Sales metrics](Screenshots/Sales_mertic.png)
 
 ![Revenue impact by category](Screenshots/revenue_impact_by_category.png)
 
