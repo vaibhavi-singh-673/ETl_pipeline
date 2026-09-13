@@ -323,9 +323,9 @@ Start-Process .\MySQL_ER_And_Schema\ER_Diagram\mysql_er_diagram.html
 - `sp_sales_metrics` - sales metrics by month.
 - `sp_returns_analysis` - returns and refund impact by category.
 
-![Business analytics procedures](Screenshots/Business_Analytic_SQL_procedure.png)
-
 ![Sales metrics](Screenshots/Sales_mertic.png)
+
+![Business analytics procedures](Screenshots/Business_Analytic_SQL_procedure.png)
 
 ![Revenue impact by category](Screenshots/revenue_impact_by_category.png)
 
